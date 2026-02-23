@@ -53,21 +53,21 @@ const AboutMe = () => {
 
   return (
     <section className="pt-4 mt-4">
-      <h2 className="text-center">About me</h2>
+      <h2 className="text-center text-2xl">About me</h2>
       {loading ? (
-        <p className="far-galaxy">Loading character...</p>
+        <p className="text-3xl text-justify leading-normal tracking-widest">Loading character...</p>
       ) : error ? (
-        <p className="far-galaxy">{error}</p>
+        <p className="text-3xl text-justify leading-normal tracking-widest">{error}</p>
       ) : (
         <>
-          <p className="far-galaxy">Name: {person?.name || "Unknown"}</p>
-          <p className="far-galaxy">Birth year: {person?.birth_year || "Unknown"}</p>
-          <p className="far-galaxy">Gender: {person?.gender || "Unknown"}</p>
-          <p className="far-galaxy">Height: {person?.height || "Unknown"}</p>
-          <p className="far-galaxy">Mass: {person?.mass || "Unknown"}</p>
-          <p className="far-galaxy">Hair color: {person?.hair_color || "Unknown"}</p>
-          <p className="far-galaxy">Skin color: {person?.skin_color || "Unknown"}</p>
-          <p className="far-galaxy">Eye color: {person?.eye_color || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Name: {person?.name || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Birth year: {person?.birth_year || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Gender: {person?.gender || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Height: {person?.height || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Mass: {person?.mass || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Hair color: {person?.hair_color || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Skin color: {person?.skin_color || "Unknown"}</p>
+          <p className="text-3xl text-justify leading-normal tracking-widest">Eye color: {person?.eye_color || "Unknown"}</p>
         </>
       )}
     </section>

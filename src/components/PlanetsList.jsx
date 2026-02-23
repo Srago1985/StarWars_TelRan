@@ -29,7 +29,7 @@ const PlanetsList = ({ id = "planet", name = "planet", ...props }) => {
   }, []);
 
   return (
-    <select id={id} name={name} {...props}>
+    <select id={id} name={name} {...props} className='w-full p-3 border border-solid rounded-sm mt-1.5 mb-4 resize-y border-[#ccc]'>
       <option value="">Select a planet...</option>
       {loading ? (
         <option value="">Loading planets...</option>

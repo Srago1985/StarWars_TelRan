@@ -28,31 +28,38 @@ const Contact = () => {
     }, []);
 
     return (
-        <div className="container">
+        <div className="border rounded-b-[5px] bg-transparent p-5">
             <form>
-                <label htmlFor="fname">First Name</label>
-                <input type="text" id="fname" name="firstname" placeholder="Your name.." />
+                <label>
+                    First Name
+                    <input type="text" className='w-full p-3 border border-solid rounded-sm mt-1.5 mb-4 resize-y border-[#ccc]' name="firstname" placeholder="Your name.." />
+                </label>
 
-                <label htmlFor="lname">Last Name</label>
-                <input type="text" id="lname" name="lastname" placeholder="Your last name.." />
+                <label>
+                    Last Name
+                    <input type="text" className='w-full p-3 border border-solid rounded-sm mt-1.5 mb-4 resize-y border-[#ccc]' name="lastname" placeholder="Your last name.." />
+                </label>
 
-                <label htmlFor="planet">Planet</label>
-                {loading ? (
-                    <div>Загрузка планет...</div>
-                ) : error ? (
-                    <div style={{color: 'red'}}>{error}</div>
-                ) : (
-                    <PlanetsList 
-                        id="planet" 
-                        name="planet" 
-                        planets={planets} 
-                    />
-                )}
+                <label>
+                    Planet
+                    {loading ? (
+                        <div>Загрузка планет...</div>
+                    ) : error ? (
+                        <div style={{color: 'red'}}>{error}</div>
+                    ) : (
+                        <PlanetsList 
+                            name="planet" 
+                            planets={planets} 
+                        />
+                    )}
+                </label>
 
-                <label htmlFor="subject">Subject</label>
-                <textarea id="subject" name="subject" placeholder="Write something.." style={{height: "200px"}}></textarea>
+                <label>
+                    Subject
+                    <textarea name="subject" placeholder="Write something.." className='h-50 w-full p-3 border border-solid rounded-sm mt-1.5 mb-4 resize-y border-[#ccc]'></textarea>
+                </label>
 
-                <input type="submit" value="Submit" />
+                <input className='bg-[#04AA6D] text-white py-3 px-5 border-none rounded-sm cursor-pointer hover:bg-[#45a049]' type="submit" value="Submit" />
             </form>
         </div>
     )

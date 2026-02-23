@@ -4,7 +4,7 @@ import DreamTeam from "./DreamTeam.jsx";
 
 const Home = () => {
     return (
-        <main className="clearfix">
+        <main>
             <Hero/>
             <DreamTeam/>
             <OpeningCrawl/>
