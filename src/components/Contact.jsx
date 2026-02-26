@@ -7,15 +7,51 @@ const Contact = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Функция для проверки актуальности данных в localStorage
+    const isDataFresh = (timestamp) => {
+        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000; // 30 дней в миллисекундах
+        return Date.now() - timestamp < thirtyDaysInMs;
+    };
+
+    // Функция для сохранения данных в localStorage
+    const savePlanetsToStorage = (planetsData) => {
+        localStorage.setItem('starwars_planets', JSON.stringify(planetsData));
+        localStorage.setItem('starwars_planets_timestamp', Date.now().toString());
+    };
+
+    // Функция для загрузки данных из localStorage
+    const loadPlanetsFromStorage = () => {
+        const savedPlanets = localStorage.getItem('starwars_planets');
+        const savedTimestamp = localStorage.getItem('starwars_planets_timestamp');
+        
+        if (savedPlanets && savedTimestamp && isDataFresh(parseInt(savedTimestamp))) {
+            return JSON.parse(savedPlanets);
+        }
+        return null;
+    };
+
     useEffect(() => {
         const loadPlanets = async () => {
             try {
+                // Сначала пытаемся загрузить из localStorage
+                const cachedPlanets = loadPlanetsFromStorage();
+                
+                if (cachedPlanets) {
+                    setPlanets(cachedPlanets);
+                    setLoading(false);
+                    return;
+                }
+
+                // Если кэш устарел или отсутствует, загружаем с API
                 const response = await fetch(`${base_url}/v1/planets`);
                 if (!response.ok) {
                     throw new Error('Failed to load planets');
                 }
                 const planetsData = await response.json();
                 setPlanets(planetsData);
+                
+                // Сохраняем данные в localStorage
+                savePlanetsToStorage(planetsData);
             } catch (error) {
                 console.error('Error loading planets:', error);
                 setError('Не удалось загрузить список планет');
