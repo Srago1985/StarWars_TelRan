@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
-import { base_url } from '../utils/constants.js';
+import { base_url } from '../utils/constants.ts';
+import { PlanetData } from '../utils/types.ts';
 
-const PlanetsList = ({ id = "planet", name = "planet", ...props }) => {
-  const [planets, setPlanets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+interface PlanetsListProps {
+  id?: string;
+  name?: string;
+  [key: string]: any;
+}
+
+const PlanetsList = ({ id = "planet", name = "planet", ...props }: PlanetsListProps) => {
+  const [planets, setPlanets] = useState<PlanetData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const loadPlanets = async () => {
@@ -15,7 +22,7 @@ const PlanetsList = ({ id = "planet", name = "planet", ...props }) => {
         if (!response.ok) {
           throw new Error('Failed to load planets');
         }
-        const planetsData = await response.json();
+        const planetsData = await response.json() as PlanetData[];
         setPlanets(planetsData);
       } catch (err) {
         console.error(err);

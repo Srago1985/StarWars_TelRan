@@ -1,4 +1,9 @@
-const Friend = ({friend, pos}) => {
+interface FriendProps {
+    friend: string;
+    pos: number;
+}
+
+const Friend = ({friend, pos}: FriendProps) => {
     let styles = "w-full";
     if (pos === 9) {
         styles += " rounded-br-3xl";

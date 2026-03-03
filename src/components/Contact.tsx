@@ -1,26 +1,27 @@
 import { useEffect, useState } from 'react';
-import { base_url } from '../utils/constants.js';
+import { base_url } from '../utils/constants.ts';
+import { PlanetData } from '../utils/types.ts';
 import PlanetsList from './PlanetsList';
 
 const Contact = () => {
-    const [planets, setPlanets] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [planets, setPlanets] = useState<PlanetData[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     // Функция для проверки актуальности данных в localStorage
-    const isDataFresh = (timestamp) => {
+    const isDataFresh = (timestamp: number): boolean => {
         const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000; // 30 дней в миллисекундах
         return Date.now() - timestamp < thirtyDaysInMs;
     };
 
     // Функция для сохранения данных в localStorage
-    const savePlanetsToStorage = (planetsData) => {
+    const savePlanetsToStorage = (planetsData: PlanetData[]): void => {
         localStorage.setItem('starwars_planets', JSON.stringify(planetsData));
         localStorage.setItem('starwars_planets_timestamp', Date.now().toString());
     };
 
     // Функция для загрузки данных из localStorage
-    const loadPlanetsFromStorage = () => {
+    const loadPlanetsFromStorage = (): PlanetData[] | null => {
         const savedPlanets = localStorage.getItem('starwars_planets');
         const savedTimestamp = localStorage.getItem('starwars_planets_timestamp');
         
@@ -47,7 +48,7 @@ const Contact = () => {
                 if (!response.ok) {
                     throw new Error('Failed to load planets');
                 }
-                const planetsData = await response.json();
+                const planetsData = await response.json() as PlanetData[];
                 setPlanets(planetsData);
                 
                 // Сохраняем данные в localStorage

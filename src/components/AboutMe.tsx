@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { base_url } from '../utils/constants.js';
+import { base_url } from '../utils/constants.ts';
+import { PersonData } from '../utils/types.ts';
 
 const AboutMe = () => {
-  const [person, setPerson] = useState(() => {
+  const [person, setPerson] = useState<PersonData | null>(() => {
     const saved = localStorage.getItem('person');
     const savedTimestamp = localStorage.getItem('personTimestamp');
     
@@ -17,8 +18,8 @@ const AboutMe = () => {
     return null; 
   });
 
-  const [loading, setLoading] = useState(!person);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState<boolean>(!person);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const loadRandomPerson = async () => {
@@ -29,11 +30,11 @@ const AboutMe = () => {
         if (!response.ok) {
           throw new Error('Failed to load person');
         }
-        const people = await response.json();
+        const people = await response.json() as PersonData[];
         if (!Array.isArray(people) || people.length === 0) {
           throw new Error('No people available');
         }
-        const randomPerson = people[Math.floor(Math.random() * people.length)];
+        const randomPerson: PersonData = people[Math.floor(Math.random() * people.length)];
         
         setPerson(randomPerson);
         localStorage.setItem('person', JSON.stringify(randomPerson));

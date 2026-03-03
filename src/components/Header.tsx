@@ -1,7 +1,11 @@
-import { ChangePageContext } from "../utils/context.js";
-import Navigation from "./Navigation.jsx";
+import { ChangePageContext } from "../utils/context.ts";
+import Navigation from "./Navigation.tsx";
 
-const Header = ({changePage}) => {
+interface HeaderProps {
+    changePage: (page: string) => void;
+}
+
+const Header = ({changePage}: HeaderProps) => {
     return (
         <header className="rounded-t-3xl bg-gray mb-3">
             <ChangePageContext value={{changePage}}>
