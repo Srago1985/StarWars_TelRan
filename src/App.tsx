@@ -5,6 +5,7 @@ import Footer from "./components/Footer.tsx";
 import {useState} from "react";
 import {navItems} from "./utils/constants.ts";
 
+
 function App() {
     const [page, setPage] = useState(navItems[0]);
 

@@ -1,56 +1,81 @@
 import { useEffect, useState } from 'react';
-import { base_url } from '../utils/constants.ts';
 import { PersonData } from '../utils/types.ts';
+import { useParams } from 'react-router';
+import { characters } from '../utils/constants.ts';
+import ErrorPage from './ErrorPage.tsx';
+
+const CACHE_KEY = 'personsCache';
+const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+type PersonsCache = Record<string, { data: PersonData; timestamp: number }>;
+
+const readPersonsCache = (): PersonsCache => {
+  const raw = localStorage.getItem(CACHE_KEY);
+  if (!raw) return {};
+
+  try {
+    return JSON.parse(raw) as PersonsCache;
+  } catch {
+    return {};
+  }
+};
+
+const writePersonsCache = (cache: PersonsCache) => {
+  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+};
 
 const AboutMe = () => {
-  const [person, setPerson] = useState<PersonData | null>(() => {
-    const saved = localStorage.getItem('person');
-    const savedTimestamp = localStorage.getItem('personTimestamp');
-    
-    if (saved && savedTimestamp) {
-      const now = Date.now();
-      const saved30DaysAgo = now - (30 * 24 * 60 * 60 * 1000); // 30 дней в миллисекундах
-      
-      if (parseInt(savedTimestamp) > saved30DaysAgo) {
-        return JSON.parse(saved); 
-      }
-    }
-    return null; 
-  });
+  const { heroID } = useParams();
+  const isValidHero = Boolean(heroID && heroID in characters);
 
-  const [loading, setLoading] = useState<boolean>(!person);
+  const [person, setPerson] = useState<PersonData | null>(null);
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    const loadRandomPerson = async () => {
-      setLoading(true);
-      setError('');
+    const fetchPerson = async () => {
+      if (!isValidHero || !heroID) {
+        return;
+      }
+
+      const now = Date.now();
+      const cache = readPersonsCache();
+      const cachedHero = cache[heroID];
+
+      if (cachedHero && now - cachedHero.timestamp <= CACHE_TTL_MS) {
+        setPerson(cachedHero.data);
+        setError('');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(`${base_url}/v1/peoples`);
+        setLoading(true);
+        setError('');
+        const response = await fetch(characters[heroID as keyof typeof characters].url);
         if (!response.ok) {
-          throw new Error('Failed to load person');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const people = await response.json() as PersonData[];
-        if (!Array.isArray(people) || people.length === 0) {
-          throw new Error('No people available');
-        }
-        const randomPerson: PersonData = people[Math.floor(Math.random() * people.length)];
-        
-        setPerson(randomPerson);
-        localStorage.setItem('person', JSON.stringify(randomPerson));
-        localStorage.setItem('personTimestamp', Date.now().toString());
+        const data: PersonData = await response.json();
+        setPerson(data);
+
+        cache[heroID] = { data, timestamp: now };
+        writePersonsCache(cache);
       } catch (err) {
-        console.error(err);
-        setError('Unable to load person');
+        setError('Failed to fetch character data. Please try again later.');
+        setPerson(null);
       } finally {
         setLoading(false);
       }
     };
 
-    if (!person) {
-      loadRandomPerson();
-    }
-  }, [person]);
+    fetchPerson();
+  }, [heroID, isValidHero]);
+
+  if (!isValidHero) {
+    return <ErrorPage />;
+  }
 
   return (
     <section className="pt-4 mt-4">
