@@ -10,8 +10,20 @@ import friend8 from '../assets/friend8.jpg'
 import friend9 from '../assets/friend9.jpg'
 
 export const base_url: string = `https://sw-info-api.herokuapp.com`
-export const navItems: string[] = ['Home', 'About me', 'Star Wars', 'Contact'];
-export const friends: string[] = [friend1, friend2, friend3, friend4, friend5, friend6, friend7, friend8, friend9];
+export const appRoutes = {
+    home: '/home',
+    aboutMe: '/about me',
+    starWars: '/star wars',
+    contact: '/contact'
+} as const;
+export const heroQueryParam = 'hero';
+
+export const navItems = [
+    { label: 'Home', to: appRoutes.home },
+    { label: 'About me', to: appRoutes.aboutMe },
+    { label: 'Star Wars', to: appRoutes.starWars },
+    { label: 'Contact', to: appRoutes.contact }
+] as const;
 export const version = '/v1';
 export const characters = {
     luke: {
@@ -64,5 +76,14 @@ export const characters = {
         img: friend7,
         url: `${base_url+version}/transports/10`
     }
-};
+} as const;
+
+export type HeroID = keyof typeof characters;
+
+export const defaultHeroID: HeroID = 'luke';
+export const defaultHero = characters[defaultHeroID];
+
+export const isHeroID = (value: string): value is HeroID => value in characters;
+
+export const friends: HeroID[] = [defaultHeroID, 'r2d2', 'c3po', 'ewok', 'chewbacca', 'han_solo', 'yoda', 'falcon', 'obi_wan', 'leia'];
 

@@ -1,14 +1,18 @@
 
 import { NavLink } from "react-router";
+import { heroQueryParam, navItems } from "../utils/constants.ts";
+import { useCurrentHero } from "../hooks/useCurrentHero.ts";
 
 interface NavItemProps {
-  itemTitle: string;
+  item: (typeof navItems)[number];
 }
 
-const NavItem = ({itemTitle}: NavItemProps) => {
+const NavItem = ({item}: NavItemProps) => {
+  const { heroID } = useCurrentHero();
+  const to = `${item.to}?${heroQueryParam}=${heroID}`;
     
     return (
-        <NavLink to={`/${itemTitle.toLowerCase()}`} className={'bg-danger rounded-md px-3 border cursor-pointer hover:bg-red-500 hover:text-amber-50'}>{itemTitle}</NavLink>
+    <NavLink to={to} className={'bg-danger rounded-md px-3 border cursor-pointer hover:bg-red-500 hover:text-amber-50'}>{item.label}</NavLink>
     )
 }
 

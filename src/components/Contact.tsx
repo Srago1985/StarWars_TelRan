@@ -1,68 +1,8 @@
-import { useEffect, useState } from 'react';
-import { base_url } from '../utils/constants.ts';
-import { PlanetData } from '../utils/types.ts';
 import PlanetsList from './PlanetsList';
+import { usePlanets } from '../hooks/usePlanets.ts';
 
 const Contact = () => {
-    const [planets, setPlanets] = useState<PlanetData[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    // Функция для проверки актуальности данных в localStorage
-    const isDataFresh = (timestamp: number): boolean => {
-        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000; // 30 дней в миллисекундах
-        return Date.now() - timestamp < thirtyDaysInMs;
-    };
-
-    // Функция для сохранения данных в localStorage
-    const savePlanetsToStorage = (planetsData: PlanetData[]): void => {
-        localStorage.setItem('starwars_planets', JSON.stringify(planetsData));
-        localStorage.setItem('starwars_planets_timestamp', Date.now().toString());
-    };
-
-    // Функция для загрузки данных из localStorage
-    const loadPlanetsFromStorage = (): PlanetData[] | null => {
-        const savedPlanets = localStorage.getItem('starwars_planets');
-        const savedTimestamp = localStorage.getItem('starwars_planets_timestamp');
-        
-        if (savedPlanets && savedTimestamp && isDataFresh(parseInt(savedTimestamp))) {
-            return JSON.parse(savedPlanets);
-        }
-        return null;
-    };
-
-    useEffect(() => {
-        const loadPlanets = async () => {
-            try {
-                // Сначала пытаемся загрузить из localStorage
-                const cachedPlanets = loadPlanetsFromStorage();
-                
-                if (cachedPlanets) {
-                    setPlanets(cachedPlanets);
-                    setLoading(false);
-                    return;
-                }
-
-                // Если кэш устарел или отсутствует, загружаем с API
-                const response = await fetch(`${base_url}/v1/planets`);
-                if (!response.ok) {
-                    throw new Error('Failed to load planets');
-                }
-                const planetsData = await response.json() as PlanetData[];
-                setPlanets(planetsData);
-                
-                // Сохраняем данные в localStorage
-                savePlanetsToStorage(planetsData);
-            } catch (error) {
-                console.error('Error loading planets:', error);
-                setError('Не удалось загрузить список планет');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadPlanets();
-    }, []);
+    const { planets, loading, error } = usePlanets();
 
     return (
         <div className="border rounded-b-[5px] bg-transparent p-5">
@@ -86,6 +26,7 @@ const Contact = () => {
                     ) : (
                         <PlanetsList 
                             name="planet" 
+                            id="planet"
                             planets={planets} 
                         />
                     )}
