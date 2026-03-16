@@ -7,23 +7,28 @@ export const useCurrentHero = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchString = searchParams.toString();
   const heroFromUrl = searchParams.get(heroQueryParam);
+  const invalidHero = heroFromUrl !== null && !isHeroID(heroFromUrl);
 
   const heroID: HeroID = heroFromUrl && isHeroID(heroFromUrl) ? heroFromUrl : getStoredHeroID();
   const hero = getHeroByID(heroID);
 
   useEffect(() => {
+    if (invalidHero) {
+      return;
+    }
+
     setStoredHeroID(heroID);
-  }, [heroID]);
+  }, [heroID, invalidHero]);
 
   useEffect(() => {
-    if (heroFromUrl === heroID) {
+    if (invalidHero || heroFromUrl === heroID) {
       return;
     }
 
     const nextParams = new URLSearchParams(searchString);
     nextParams.set(heroQueryParam, heroID);
     setSearchParams(nextParams, { replace: true });
-  }, [heroFromUrl, heroID, searchString, setSearchParams]);
+  }, [heroFromUrl, heroID, invalidHero, searchString, setSearchParams]);
 
   const setHeroID = (nextHeroID: HeroID, replace = true) => {
     const nextParams = new URLSearchParams(searchString);
@@ -32,5 +37,5 @@ export const useCurrentHero = () => {
     setStoredHeroID(nextHeroID);
   };
 
-  return { heroID, hero, setHeroID };
+  return { heroID, hero, setHeroID, invalidHero };
 };
